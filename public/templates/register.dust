@@ -1,0 +1,181 @@
+{>"layouts/master" /}
+{<title}Registeration Page{/title}
+{<body}
+<style>
+  body {
+  background-color:lightblue;
+  font-family: Verdana, Geneva, sans-serif !important;
+  font-size:10pt !important;
+   }
+</style>
+<script src="http://jqueryvalidation.org/files/dist/additional-methods.min.js"></script>
+
+    <form class="form-horizontal">
+    <fieldset>
+
+ <!-- Form Name -->
+ <legend>Registration Form</legend>
+ <!--input type="hidden" name="_csrf" value="<%= _csrf %>" /-->
+ <!-- Text input-->
+ <div class="form-group">
+  <label class="col-md-4 control-label" for="First Name">First Name</label>
+  <div class="col-md-4">
+  <input id="firstname" name="firstname" placeholder="Enter Firstname" class="form-control input-md" type="text">
+    <span class="help-block">This should be minimum of 3 characters</span>
+  </div>
+</div>
+
+<!-- Text input-->
+<div class="form-group">
+  <label class="col-md-4 control-label" for="Last Name">Last Name</label>
+  <div class="col-md-4">
+  <input id="lastname" name="lastname" placeholder="Enter Lastname" class="form-control input-md" type="text">
+   <span class="help-block">This should be minimum of 3 characters</span>
+  </div>
+</div>
+
+<!-- Text input-->
+<div class="form-group">
+  <label class="col-md-4 control-label" for="Email Id">Email Id</label>
+  <div class="col-md-4">
+  <input  id="emailid" name="emailid" placeholder="Enter EmailId" class="form-control input-md" type="email">
+   <span class="help-block">This will be your login id</span>
+  </div>
+</div>
+
+ <!-- Password input-->
+  <div class="form-group">
+   <label class="col-md-4 control-label" for="Password">Password</label>
+   <div class="col-md-4">
+    <input id="password" name="password" placeholder="password" class="form-control input-md" type="password">
+    <span class="help-block">Minimum 8 Characters and atleast One UpperCase and One LowerCase and  One special character(!@#$%^&*-)</span>
+  </div>
+</div>
+
+  <!-- Text input-->
+  <div class="form-group">
+    <label class="col-md-4 control-label" for="address">Address</label>
+    <div class="col-md-4">
+     <input id="address" name="address" placeholder="" class="form-control input-md" type="text">
+    </div>
+  </div>
+
+   <!-- Text input-->
+  <div class="form-group">
+    <label class="col-md-4 control-label" for="phone number">Phone number</label>
+    <div class="col-md-4">
+     <input id="phonenumber" name="phonenumber" placeholder="" class="form-control input-md" type="text">
+     <span class="help-block">Phonenumber should be of valid US format</span>
+   </div>
+  </div>
+
+   <!-- Button -->
+   <div class="form-group">
+     <label class="col-md-4 control-label" for="loginbutton"></label>
+     <div class="col-md-4">
+    <button name="loginbutton" class="btn btn-primary">submit</button>
+    </div>
+   </div>
+
+<script>
+  $.validator.addMethod(
+        "regex",
+        function(value, element, regexp) {
+            var re = new RegExp(regexp);
+            return this.optional(element) || re.test(value);
+        },
+        "Please check your input."
+);
+
+$.fn.serializeObject = function()
+{
+    var o = {};
+    var a = this.serializeArray();
+    $.each(a, function() {
+        if (o[this.name] !== undefined) {
+            if (!o[this.name].push) {
+                o[this.name] = [o[this.name]];
+            }
+            o[this.name].push(this.value || '');
+        } else {
+            o[this.name] = this.value || '';
+        }
+    });
+    return o;
+};
+
+    $('form').validate({
+        rules: {
+            firstname: {
+                minlength: 3,
+                maxlength: 15,
+                required: true
+            },
+            lastname: {
+                minlength: 3,
+                maxlength: 15,
+                required: true
+            },
+           emailid: {
+            required: true
+             },
+           password: {
+               regex: "^(?=.*\\d)(?=.*[!@#\\$%\\^&\\*\\-])(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z!@#\\$%\\^&\\*\\-]{8,}$",
+               required: true
+               },
+          phonenumber: {
+            required: true,
+            phoneUS: true
+         }
+        },
+        highlight: function(element) {
+            $(element).closest('.form-group').addClass('has-error');
+        },
+        unhighlight: function(element) {
+            $(element).closest('.form-group').removeClass('has-error');
+        },
+        errorElement: 'span',
+        errorClass: 'help-block',
+        errorPlacement: function(error, element) {
+            if(element.parent('.input-group').length) {
+                error.insertAfter(element.parent());
+            } else {
+                error.insertAfter(element);
+            }
+        },
+        debug:true,
+        submitHandler: function(form) {
+          try {
+           var data = $(form).serializeObject();
+           delete data.loginbutton;
+
+ $.ajax({
+        type: "POST",
+        url: "/register",
+        data: data,
+        dataType: "json",
+        "Content-Type":"application/json",
+        success: function(response){
+          alert(response.status);
+          $("#firstname").val("");
+          $("#lastname").val("");
+          $("#emailid").val("");
+          $("#password").val("");
+          $("#address").val("");
+          $("#phonenumber").val("");
+        },
+   
+        error: function(jqXHR, status, errMsg) {
+            alert(jqXHR.responseText);
+        }
+  });
+          } catch(e) {
+            alert(e);
+          }
+          return false;
+        }
+    });
+</script>
+</fieldset>
+</form>
+{/body}

@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>{+title /}</title>
+    <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+    <script src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.11.1/jquery.validate.min.js">
+    </script>
+    <link rel="stylesheet" href="http://getbootstrap.com/dist/css/bootstrap.css">
+</head>
+<body>
+<div id="wrapper">
+    {+body /}
+</div>
+<script data-main="/js/app" src="/components/requirejs/require.js"></script>
+</body>
+</html>
